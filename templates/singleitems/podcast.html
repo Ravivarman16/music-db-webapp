@@ -1,0 +1,97 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!-- TODO Query (6)  
+        Display All Relevant Podcast Infromation including meta data
+        -->
+
+        {% if podcast | length > 0 %}
+            <h2 class="title"> {{podcast[0].podcast_title}}</h2>
+
+            <h3> Descriptions </h3>
+            {% for instance in podcast %}
+                {% if instance.md_type_name == 'description' %}
+                    <div>
+                        {{instance.md_value}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <br/>
+            Podcast accessed from: {{podcast[0].podcast_uri}}
+            <br/>
+            Last Updated: {{podcast[0].podcast_last_updated}}
+
+            <h3> Artworks </h3>
+            {% for instance in podcast %}
+                {% if instance.md_type_name == 'artwork' %}
+                    <img src="{{instance.md_value}}" alt="image">
+                    <br/>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <div>
+            
+            <h3>Genres</h3>
+                <table class="styled">
+                    <tbody>
+                        {% for instance in podcast %}
+                            {% if instance.md_type_name == 'podcast genre' %}
+                                
+                                <tr class="clickable-tr" data-href="{{ url_for('single_genre', genre_id=instance.md_id)}}">
+                                    <td style="text-align: center">{{instance.md_value}}</td>
+                                </tr>
+                        {% endif %}
+                        {% endfor %}
+                        </tbody>
+        
+                    </table>
+                            
+            </div> 
+        
+        
+            <div>
+                
+                <h3>{{podcast[0].podcast_title}} Episodes </h3>
+                <table class="styled">
+
+                    <thead>
+                        <tr>
+                            <td>Podcast Episode Media ID</td>
+                            <td>Podcast Episode Title</td>
+                            <td>Podcast Episode Length</td>
+                            <td>Podcast Episode URI</td>
+                            <td>Podcast Episode Published Date</td>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+
+                        {% for instance in podcasteps %}
+                        <tr class="clickable-tr" data-href="{{ url_for('single_podcastep', media_id=instance.media_id)}}">
+                            <td style="text-align: center">{{ instance.media_id }}</td>
+                            <td>{{instance.podcast_episode_title}}</td>
+                            <td>{{instance.podcast_episode_length}}</td>
+                            <td>{{instance.podcast_episode_uri}}</td>
+                            <td>{{instance.podcast_episode_published_date}}</td>                       
+                        </tr>
+                        {% endfor %}
+
+
+                    </tbody>
+        
+                </table>
+        
+            </div>
+
+        
+        
+        <!-- TODO - Query (10)- DONE
+        You will have to modify the above approach slightly to make each genre clickable
+        -->
+        {% else %}
+            <h2 class="title"> Invalid Podcast ID</h2>
+        {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}

@@ -1,0 +1,72 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+
+        <h2 class="title"> Add Song </h2>
+
+        <!-- Song Schema 
+            CREATE TABLE Song (
+                song_id INTEGER PRIMARY KEY REFERENCES AudioMedia(media_id),
+                song_title VARCHAR(100),
+                length INTEGER
+            );
+            Associated Media_id information
+                - storage location
+            Associated Artist information
+                - artist_id
+            Associated Meta data
+                - description (4)
+                - song_genre (1)
+                - artwork (3)
+        -->
+        <!-- Query (8)
+            DONE NEED TO CHECK IT WORKS
+            Add Song
+            You will need to create a form for taking in input. Remember the input has to be valid,
+            so you will have to check the data somewhere. The best way is to pass any relevant information that is
+            needed to this page (such as artists, metadata type id's or values) and then manage the display similar to what is
+            done in the drop down menu for the search bar
+        -->
+        <form class="Add" method="POST" action="{{url_for('add_song')}}">
+
+            Song title: <input type="text" name="song_title" value="Empty Song" placeholder="Song title">
+            Description: <input type="text" name="description" value="no description" placeholder="Description">
+            
+
+            <br/>
+            Song Length: <input type="text" name="song_length" value="0" placeholder="2021">
+            Storage location: <input type="text" name="storage_location" value="no location" placeholder="Storage location">
+            
+            
+            <br/>
+
+            Song Genre: <select id="song_genre" name="song_genre">
+                            {% for instance in songgenres %}
+                            <!--  Choose the option  of Genre retrieve genre value by id-->
+                                <option value="{{instance.md_value}}">{{instance.md_value}}</option>
+                            {% endfor %}
+                        </select>
+
+            Artist: <select id="artist_id" name="artist_id">
+                        {% for instance in allartists %}
+                        <!--  Choose the option  of artist retrieve artist name by id-->
+                            <option value="{{instance.artist_id}}">{{instance.artist_name}}</option>
+                        {% endfor %}
+                    </select>
+
+            <br/>
+            <button class="flat" type="submit">Add</button>
+            <br/>
+            <hr/>
+            <hr/>
+            <hr/>
+            
+
+        </form>
+ 
+        <br/>
+        <div>
+
+    </div>
+</div>
+{% include 'bottom.html'%}

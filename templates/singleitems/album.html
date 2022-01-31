@@ -1,0 +1,81 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!-- Check if We have a valid Album -->
+        {% if album | length > 0 %}
+            <h2 class="title"> {{album[0].album_title}}</h2>
+            <hr/>
+            <h3> Artworks </h3>
+            {% for instance in album %}
+                {% if instance.md_type_name == 'artwork' %}
+                    <img src="{{instance.md_value}}" alt="image">
+                    <br/>© Spotify Public Domain 2019.
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <h3> Descriptions </h3>
+            
+            {%if album_description == []%}
+            <h4>No available description.</h4>
+            {%endif%}
+
+
+            {% for instance in album_description %}
+                {% if instance.md_type_name == 'description' %}
+                <h4>Description for {{instance.song_title}}</h4>
+                    <div>
+                        {{instance.md_value}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <!-- TODO - Query (10) -DONE
+            You will have to modify this slightly to make each genre clickable
+            -->
+            <div>
+            
+                <h3>Genres</h3>
+                    <table class="styled">
+                        <tbody>
+                            {% for instance in album_genres %}
+                                
+                                    
+                                    <tr class="clickable-tr" data-href="{{ url_for('single_genre', genre_id=instance.songgenresid)}}">
+                                        <td style="text-align: center">{{instance.songgenres}}</td>
+                                    </tr>
+                            
+                            {% endfor %}
+                            </tbody>
+            
+                        </table>
+                                
+            </div> 
+            <div>
+                <!-- All Songs -->
+                <table class="styled">
+                    <thead>
+                        <tr>
+                            <td>Song ID</td>
+                            <td>Song Title</td>
+                            <td>Artists</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for instance in album_songs %}
+                        <tr class="clickable-tr" data-href="{{ url_for('single_song', song_id=instance.song_id)}}">
+                            <td style="text-align: center">{{ instance.song_id }}</td>
+                            <td>{{instance.song_title}}</td>
+                            <td>{{instance.artists}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+        
+                </table>
+        
+            </div>
+        {% else %}
+            <h2 class="title"> Invalid Album ID</h2>
+        {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}

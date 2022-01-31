@@ -1,0 +1,47 @@
+{% include 'top.html' %}
+    <div class="content">
+        <h1 class="title">Search Movies</h1>
+        <!-- Query (9)
+            Search for Movies
+            Form to take in input
+         -->
+        <form class="Search" method="POST" action="{{url_for('search_movies')}}">
+            <input type="text" name="searchterm" placeholder="Movie Name" autofocus required>
+            <button class="flat" type="submit">Search</button>
+        </form>
+        <!-- Query (9)
+            Search for Movies
+            Second is a table to display reults
+         -->
+            {% if movies | length > 0 %}
+            <!-- All Movies -->
+            <table class="styled">
+                <thead>
+                    <tr>
+                        <td>Movie ID</td>
+                        <td>Movie Name</td>
+                        <td>Movie Release Year</td>
+                        <td>Metadata Count</td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for instance in movies %}
+
+                        <!-- Each row is a link to each individual Movie page -->
+                        <tr class="clickable-tr" data-href="{{ url_for('single_movie', movie_id=instance.movie_id)}}">
+                            <td style="text-align: center">{{ instance.movie_id }}</td>
+                            <td>{{instance.movie_title}}</td>
+                            <td>{{instance.release_year}}</td>
+                            <td>{{instance.count}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        {% endif %}
+        
+
+
+    </div>
+{% include 'bottom.html'%}

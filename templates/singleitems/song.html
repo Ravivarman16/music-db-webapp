@@ -1,0 +1,59 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!-- Check if We have a valid song -->
+        {% if song | length > 0 %}
+            <h2 class="title"> {{song[0].song_title}} by {{song[0].artists}}</h2>
+            <br/>
+            Song is {{song[0].length}} seconds long.
+            <hr/>
+            <h3> Artworks </h3>
+            {% for instance in songArtwork %}
+                {% if instance.md_type_name == 'artwork' %}
+                    <img src="{{instance.md_value}}" alt="image">
+                    <br/>© Spotify Public Domain 2019.
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <h3> Descriptions </h3>
+
+            {%if songDescription == []%}
+            <h4>No available description</h4>
+            {%endif%}
+
+
+            {% for instance in songmetadata %}
+                {% if instance.md_type_name == 'description' %}
+                    <div>
+                        {{instance.md_value}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <!-- TODO - Query 10 - DONE
+            You will have to modify the approach below slightly to make each genre clickable
+            -->
+            <div>
+            
+            <h3>Genres</h3>
+                <table class="styled">
+                    <tbody>
+                        {% for instance in songmetadata %}
+                            {% if instance.md_type_name == 'song genre' %}
+                                
+                                <tr class="clickable-tr" data-href="{{ url_for('single_genre', genre_id=instance.md_id)}}">
+                                    <td style="text-align: center">{{instance.md_value}}</td>
+                                </tr>
+                        {% endif %}
+                        {% endfor %}
+                        </tbody>
+        
+                    </table>
+                            
+            </div>  
+        {% else %}
+            <h2 class="title"> Invalid Song ID</h2>
+        {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}

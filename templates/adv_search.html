@@ -1,0 +1,155 @@
+{% include 'top.html' %}
+
+<script src="{{ url_for('static', filename='scripts/jquery.js') }}"></script>
+<script type="application/javascript">
+
+    function getsearchtarget()
+    {
+
+        //Get the select select list and store in a variable
+        var e = document.getElementById("searchtarget");
+
+        //Get the selected value of the select list
+        var formaction = e.options[e.selectedIndex].value;
+
+        //Update the form action
+        document.searchform.action = formaction;
+
+    }
+    </script>
+    
+    <div class="content" style="float:center">
+        <h1 style="text-align:center" class="title">Advanced Search</h1>
+
+        <form class="Search" method="POST" action="{{url_for('adv_search')}}">
+            <input type="text" name="searchterm" placeholder="Multi-Term keyword" autofocus required>
+            <button class="flat" type="submit">Search</button>
+            <br/>
+            <select id="searchtarget" name="searchtarget">
+                <option value="Film Genre" selected>Film Genre</option>
+                <option value="Song Genre">Song Genre</option>
+                <option value="Podcast Genre">Podcast Genre</option>               
+            </select>
+        </form>
+    </div>
+    <div>
+        <h1 class="subtitle">Search Usage</h1>
+        <p>
+            For all searches “mediaType” must be provided! Options include : 
+            [all, movie, podcast, podcastep, tvshow, tvshowep, album, song]
+            <br><br>
+            For every search the accompanying ‘genreType’ must be selected using the DropBox: Film Genre, Song Genre etc.
+            <br><br>
+            Film Genre : 
+            <br><br>
+            <ul>
+                <li>movie - Options include : name, year (i.e. >2009,<=2009, BETWEEN 2009 AND 2020), genre    </li>
+                <li>tvshow - Options include : name, year (i.e. >2009,<=2009, BETWEEN 2009 AND 2020), genre</li>
+                <li>tvshowep - Options include : showname or epname, date (i.e. >2017-01-01, BETWEEN 2017-01-01 AND 2017-01-02), season,episode</li>
+                <li>all - year (applies to movies only), genre</li>
+            </ul> 
+            Song Genre : 
+            <br><br>
+            <ul>
+                <li>song - Options include : name, genre, artist,length (i.e. >180,<=180, BETWEEN 180 AND 300)  </li>
+                <li>album - Options include : name, artist, genre</li>
+                <li>all - album name or song name, genre,artist</li>
+            </ul>
+            Podcast Genre : 
+            <br><br>
+            <ul>
+                <li>podcast - Options include : name, date (i.e. >2017-01-01, BETWEEN 2017-01-01 AND 2017-01-02), genre  </li>
+                <li>podcastep - Options include : name, date (i.e. >2017-01-01, BETWEEN 2017-01-01 AND 2017-01-02) , length (i.e. >180,<=180, BETWEEN 180 AND 300), genre</li>
+                <li>all - podcast name or podcastep name, genre,date (i.e. >2017-01-01, BETWEEN 2017-01-01 AND 2017-01-02) , length (i.e. >180,<=180, BETWEEN 180 AND 300) applies to episode only,artist</li>
+            </ul>
+
+        </p>
+
+
+    </div>
+    <br><br>
+    <br><br>
+    <h1 style="text-align:center" class="results">Search Results</h1>
+    {% if res | length > 0 %}
+    <table class="styled">
+        <thead>
+            <tr>
+                <td>Item ID </td>
+                <td>Item Name</td>
+                <td>Item Type</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instance in res %}
+
+            {% if instance.item_type == "Song" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_song', song_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+                
+            
+            </tr>
+            {% elif instance.item_type == "Album" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_album',album_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>            
+            
+            {% elif instance.item_type == "Movie" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_movie', movie_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+            {% elif instance.item_type == "TV Show Episode" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_tvshowep', tvshowep_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+            
+            {% elif instance.item_type == "TV Show" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_tvshow', tvshow_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+            {% elif instance.item_type == "Podcast" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_podcast', podcast_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+
+            {% elif instance.item_type == "PodcastEp" %}
+            <tr class="clickable-tr" data-href="{{ url_for('single_podcastep', media_id=instance.item_id)}}">
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+
+            {% else  %}
+            <tr >
+                <td style="text-align: center">{{ instance.item_id }}</td>
+                <td>{{instance.item_title}}</td>
+                <td>{{instance.item_type}}</td>
+            
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+
+    </table>
+    {% else %}
+    
+    {% endif %}
+
+{% include 'bottom.html'%}

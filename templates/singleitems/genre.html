@@ -1,0 +1,68 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        
+        
+        <!-- TODO Query (10) -->
+        <!-- First check should be a valid instance DONE -->
+        <!-- Second check should be what type of genre? -->
+        {% if res | length > 0 %}
+            <table class="styled">
+                <thead>
+                    <tr>
+                        <td>Item ID </td>
+                        <td>Item Name</td>
+                        <td>Item Type</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in res %}
+                    {% if instance.item_type == "Song" %}
+                    <tr class="clickable-tr" data-href="{{ url_for('single_song', song_id=instance.item_id)}}">
+                        <td style="text-align: center">{{ instance.item_id }}</td>
+                        <td>{{instance.item_title}}</td>
+                        <td>{{instance.item_type}}</td>
+                    
+                    </tr>
+                    
+                    {% elif instance.item_type == "Movie" %}
+                    <tr class="clickable-tr" data-href="{{ url_for('single_movie', movie_id=instance.item_id)}}">
+                        <td style="text-align: center">{{ instance.item_id }}</td>
+                        <td>{{instance.item_title}}</td>
+                        <td>{{instance.item_type}}</td>
+                    
+                    </tr>
+                    
+                    {% elif instance.item_type == "TV Show" %}
+                    <tr class="clickable-tr" data-href="{{ url_for('single_tvshow', tvshow_id=instance.item_id)}}">
+                        <td style="text-align: center">{{ instance.item_id }}</td>
+                        <td>{{instance.item_title}}</td>
+                        <td>{{instance.item_type}}</td>
+                    
+                    </tr>
+                    {% elif instance.item_type == "Podcast" %}
+                    <tr class="clickable-tr" data-href="{{ url_for('single_podcast', podcast_id=instance.item_id)}}">
+                        <td style="text-align: center">{{ instance.item_id }}</td>
+                        <td>{{instance.item_title}}</td>
+                        <td>{{instance.item_type}}</td>
+                    
+                    </tr>
+                    {% else  %}
+                    <tr >
+                        <td style="text-align: center">{{ instance.item_id }}</td>
+                        <td>{{instance.item_title}}</td>
+                        <td>{{instance.item_type}}</td>
+                    
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        
+        {% else %}
+            <h2 class="title"> Invalid Genre ID</h2>
+        {% endif %}
+    </div>
+</div>
+{% include 'bottom.html'%}

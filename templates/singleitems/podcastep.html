@@ -1,0 +1,42 @@
+{% include 'top.html' %}
+<div class="content">
+    <div class="container details">
+        <!-- TODO Query (7) -DONE
+        Display All Relevant Podcast Episode Infromation including meta data
+        -->
+        {% if podcastep | length > 0 %}
+            <h2 class="title"> Media ID: {{podcastep[0].media_id}}</h2>
+            <br/>
+            <h2 class="title"> {{podcastep[0].podcast_episode_title}} , published: {{podcastep[0].podcast_episode_published_date}} </h2>
+            <br/>
+            <h2 class="title"> Length: {{podcastep[0].podcast_episode_length}} in (seconds)</h2>
+            <br/>
+            <h2 class="title"> URI: {{podcastep[0].podcast_episode_uri}} </h2>
+            <br/>
+
+            <h3> Artworks </h3>
+            {% for instance in podcastep %}
+                {% if instance.md_type_name == 'artwork' %}
+                    <img src="{{instance.md_value}}" alt="image">
+                    <br/>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <h3> Descriptions </h3>
+            {% for instance in podcastep %}
+                {% if instance.md_type_name == 'description' %}
+                    <div>
+                        {{instance.md_value}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <h2 class="title"> Invalid Podcast Episode ID</h2>
+        {% endif %}
+
+        <!-- TODO - Query (10) - NEED TO DO
+        You will have to modify the above approach slightly to make each genre clickable
+        -->
+    </div>
+</div>
+{% include 'bottom.html'%}
