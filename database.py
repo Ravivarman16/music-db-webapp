@@ -1,74 +1,31 @@
-#!/usr/bin/env python3
-"""
-MediaServer Database module.
-Contains all interactions between the webapp and the queries to the database.
-"""
-
-import configparser
-import json
-import sys
+from google.cloud import secretmanager_v1beta1
 from modules import pg8000
 
-################################################################################
-#   Welcome to the database file, where all the query magic happens.
-#   My biggest tip is look at the *week 8 lab*.
-#   Important information:
-#       - If you're getting issues and getting locked out of your database.
-#           You may have reached the maximum number of connections.
-#           Why? (You're not closing things!) Be careful!
-#       - Check things *carefully*.
-#       - There may be better ways to do things, this is just for example
-#           purposes
-#       - ORDERING MATTERS
-#           - Unfortunately to make it easier for everyone, we have to ask that
-#               your columns are in order. WATCH YOUR SELECTS!! :)
-#   Good luck!
-#       And remember to have some fun :D
-################################################################################
-
-#############################
-#                           #
-# Database Helper Functions #
-#                           #
-#############################
-
-
-#####################################################
-#   Database Connect
-#   (No need to touch
-#       (unless the exception is potatoing))
-#####################################################
+def get_secret(secret_id):
+    client = secretmanager_v1beta1.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+    response = client.access_secret_version(name=name)
+    payload = response.payload.data.decode("UTF-8")
+    return payload
 
 def database_connect():
-    """
-    Connects to the database using the connection string.
-    If 'None' was returned it means there was an issue connecting to
-    the database. It would be wise to handle this ;)
-    """
-    # Read the config file
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    if 'database' not in config['DATABASE']:
-        config['DATABASE']['database'] = config['DATABASE']['user']
-
-    # Create a connection to the database
-    connection = None
     try:
-        # Parses the config file and connects using the connect string
-        connection = pg8000.connect(database=config['DATABASE']['database'],
-                                    user=config['DATABASE']['user'],
-                                    password=config['DATABASE']['password'],
-                                    host=config['DATABASE']['host'])
-    except pg8000.OperationalError as operation_error:
-        print("""Error, you haven't updated your config.ini or you have a bad
-        connection, please try again. (Update your files first, then check
-        internet connection)
-        """)
-        print(operation_error)
+        # Fetch database details from Google Secret Manager
+        database = get_secret("database_secret")
+        user = get_secret("user_secret")
+        password = get_secret("password_secret")
+        host = get_secret("host_secret")
+
+        # Use the database details retrieved from Secret Manager to connect to the database
+        connection = pg8000.connect(database=database, user=user, password=password, host=host)
+        return connection
+    except Exception as e:
+        print("Error connecting to the database:", str(e))
         return None
 
-    # return the connection to use
-    return connection
+# Replace project_id with your actual Google Cloud project ID
+project_id = get_secret("project_id")
+
 
 ##################################################
 # Print a SQL string to see how it would insert  #
